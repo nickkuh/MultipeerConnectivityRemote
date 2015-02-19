@@ -1,0 +1,465 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		48BAECC51A96307F008C4BB7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAECC41A96307F008C4BB7 /* main.m */; };
+		48BAECC81A96307F008C4BB7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAECC71A96307F008C4BB7 /* AppDelegate.m */; };
+		48BAECCE1A96307F008C4BB7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECCC1A96307F008C4BB7 /* Main.storyboard */; };
+		48BAECD01A96307F008C4BB7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECCF1A96307F008C4BB7 /* Images.xcassets */; };
+		48BAECD31A96307F008C4BB7 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECD11A96307F008C4BB7 /* LaunchScreen.xib */; };
+		48BAECF01A9630BB008C4BB7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAECEF1A9630BB008C4BB7 /* AppDelegate.m */; };
+		48BAECF21A9630BB008C4BB7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAECF11A9630BB008C4BB7 /* main.m */; };
+		48BAECF71A9630BB008C4BB7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECF61A9630BB008C4BB7 /* Images.xcassets */; };
+		48BAECFA1A9630BB008C4BB7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECF81A9630BB008C4BB7 /* Main.storyboard */; };
+		48BAED101A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */; };
+		48BAED111A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */; };
+		48BAED141A9631CE008C4BB7 /* AvailableDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED131A9631CE008C4BB7 /* AvailableDevicesViewController.m */; };
+		48BAED171A96422F008C4BB7 /* MacViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED161A96422F008C4BB7 /* MacViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		48BAECC01A96307F008C4BB7 /* RemoteIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RemoteIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		48BAECC31A96307F008C4BB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		48BAECC41A96307F008C4BB7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		48BAECC61A96307F008C4BB7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		48BAECC71A96307F008C4BB7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		48BAECCD1A96307F008C4BB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		48BAECCF1A96307F008C4BB7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		48BAECD21A96307F008C4BB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		48BAECEA1A9630BB008C4BB7 /* RemoteOSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RemoteOSX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		48BAECED1A9630BB008C4BB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		48BAECEE1A9630BB008C4BB7 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		48BAECEF1A9630BB008C4BB7 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		48BAECF11A9630BB008C4BB7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		48BAECF61A9630BB008C4BB7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		48BAECF91A9630BB008C4BB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		48BAED0E1A96315A008C4BB7 /* MultipeerConnectivityRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultipeerConnectivityRemote.h; sourceTree = "<group>"; };
+		48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultipeerConnectivityRemote.m; sourceTree = "<group>"; };
+		48BAED121A9631CE008C4BB7 /* AvailableDevicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AvailableDevicesViewController.h; sourceTree = "<group>"; };
+		48BAED131A9631CE008C4BB7 /* AvailableDevicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AvailableDevicesViewController.m; sourceTree = "<group>"; };
+		48BAED151A96422F008C4BB7 /* MacViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacViewController.h; sourceTree = "<group>"; };
+		48BAED161A96422F008C4BB7 /* MacViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MacViewController.m; sourceTree = "<group>"; };
+		48BAED181A964341008C4BB7 /* RemoteOSX.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = RemoteOSX.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		48BAECBD1A96307F008C4BB7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48BAECE71A9630BB008C4BB7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		48BAEC8A1A962FC1008C4BB7 = {
+			isa = PBXGroup;
+			children = (
+				48BAED0D1A9630E7008C4BB7 /* Lib */,
+				48BAECC11A96307F008C4BB7 /* RemoteIOS */,
+				48BAECEB1A9630BB008C4BB7 /* RemoteOSX */,
+				48BAEC941A962FC1008C4BB7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		48BAEC941A962FC1008C4BB7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				48BAECC01A96307F008C4BB7 /* RemoteIOS.app */,
+				48BAECEA1A9630BB008C4BB7 /* RemoteOSX.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		48BAECC11A96307F008C4BB7 /* RemoteIOS */ = {
+			isa = PBXGroup;
+			children = (
+				48BAECC61A96307F008C4BB7 /* AppDelegate.h */,
+				48BAECC71A96307F008C4BB7 /* AppDelegate.m */,
+				48BAECCC1A96307F008C4BB7 /* Main.storyboard */,
+				48BAECCF1A96307F008C4BB7 /* Images.xcassets */,
+				48BAECD11A96307F008C4BB7 /* LaunchScreen.xib */,
+				48BAECC21A96307F008C4BB7 /* Supporting Files */,
+				48BAED121A9631CE008C4BB7 /* AvailableDevicesViewController.h */,
+				48BAED131A9631CE008C4BB7 /* AvailableDevicesViewController.m */,
+			);
+			path = RemoteIOS;
+			sourceTree = "<group>";
+		};
+		48BAECC21A96307F008C4BB7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				48BAECC31A96307F008C4BB7 /* Info.plist */,
+				48BAECC41A96307F008C4BB7 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		48BAECEB1A9630BB008C4BB7 /* RemoteOSX */ = {
+			isa = PBXGroup;
+			children = (
+				48BAED181A964341008C4BB7 /* RemoteOSX.entitlements */,
+				48BAECEE1A9630BB008C4BB7 /* AppDelegate.h */,
+				48BAECEF1A9630BB008C4BB7 /* AppDelegate.m */,
+				48BAECF61A9630BB008C4BB7 /* Images.xcassets */,
+				48BAECF81A9630BB008C4BB7 /* Main.storyboard */,
+				48BAECEC1A9630BB008C4BB7 /* Supporting Files */,
+				48BAED151A96422F008C4BB7 /* MacViewController.h */,
+				48BAED161A96422F008C4BB7 /* MacViewController.m */,
+			);
+			path = RemoteOSX;
+			sourceTree = "<group>";
+		};
+		48BAECEC1A9630BB008C4BB7 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				48BAECED1A9630BB008C4BB7 /* Info.plist */,
+				48BAECF11A9630BB008C4BB7 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		48BAED0D1A9630E7008C4BB7 /* Lib */ = {
+			isa = PBXGroup;
+			children = (
+				48BAED0E1A96315A008C4BB7 /* MultipeerConnectivityRemote.h */,
+				48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */,
+			);
+			path = Lib;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		48BAECBF1A96307F008C4BB7 /* RemoteIOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 48BAECE01A96307F008C4BB7 /* Build configuration list for PBXNativeTarget "RemoteIOS" */;
+			buildPhases = (
+				48BAECBC1A96307F008C4BB7 /* Sources */,
+				48BAECBD1A96307F008C4BB7 /* Frameworks */,
+				48BAECBE1A96307F008C4BB7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RemoteIOS;
+			productName = RemoteIOS;
+			productReference = 48BAECC01A96307F008C4BB7 /* RemoteIOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		48BAECE91A9630BB008C4BB7 /* RemoteOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 48BAED071A9630BB008C4BB7 /* Build configuration list for PBXNativeTarget "RemoteOSX" */;
+			buildPhases = (
+				48BAECE61A9630BB008C4BB7 /* Sources */,
+				48BAECE71A9630BB008C4BB7 /* Frameworks */,
+				48BAECE81A9630BB008C4BB7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RemoteOSX;
+			productName = RemoteOSX;
+			productReference = 48BAECEA1A9630BB008C4BB7 /* RemoteOSX.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		48BAEC8B1A962FC1008C4BB7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Mumbo Apps Ltd";
+				TargetAttributes = {
+					48BAECBF1A96307F008C4BB7 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+					48BAECE91A9630BB008C4BB7 = {
+						CreatedOnToolsVersion = 6.1.1;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 48BAEC8E1A962FC1008C4BB7 /* Build configuration list for PBXProject "MultipeerConnectivityRemote" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 48BAEC8A1A962FC1008C4BB7;
+			productRefGroup = 48BAEC941A962FC1008C4BB7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				48BAECBF1A96307F008C4BB7 /* RemoteIOS */,
+				48BAECE91A9630BB008C4BB7 /* RemoteOSX */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		48BAECBE1A96307F008C4BB7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48BAECCE1A96307F008C4BB7 /* Main.storyboard in Resources */,
+				48BAECD31A96307F008C4BB7 /* LaunchScreen.xib in Resources */,
+				48BAECD01A96307F008C4BB7 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48BAECE81A9630BB008C4BB7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48BAECF71A9630BB008C4BB7 /* Images.xcassets in Resources */,
+				48BAECFA1A9630BB008C4BB7 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		48BAECBC1A96307F008C4BB7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48BAED141A9631CE008C4BB7 /* AvailableDevicesViewController.m in Sources */,
+				48BAECC81A96307F008C4BB7 /* AppDelegate.m in Sources */,
+				48BAED101A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */,
+				48BAECC51A96307F008C4BB7 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		48BAECE61A9630BB008C4BB7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				48BAECF21A9630BB008C4BB7 /* main.m in Sources */,
+				48BAED111A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */,
+				48BAED171A96422F008C4BB7 /* MacViewController.m in Sources */,
+				48BAECF01A9630BB008C4BB7 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		48BAECCC1A96307F008C4BB7 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				48BAECCD1A96307F008C4BB7 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		48BAECD11A96307F008C4BB7 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				48BAECD21A96307F008C4BB7 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		48BAECF81A9630BB008C4BB7 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				48BAECF91A9630BB008C4BB7 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		48BAECB41A962FC1008C4BB7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		48BAECB51A962FC1008C4BB7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		48BAECE11A96307F008C4BB7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = RemoteIOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		48BAECE21A96307F008C4BB7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = RemoteIOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		48BAED081A9630BB008C4BB7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RemoteOSX/RemoteOSX.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = RemoteOSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		48BAED091A9630BB008C4BB7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = RemoteOSX/RemoteOSX.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				INFOPLIST_FILE = RemoteOSX/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		48BAEC8E1A962FC1008C4BB7 /* Build configuration list for PBXProject "MultipeerConnectivityRemote" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48BAECB41A962FC1008C4BB7 /* Debug */,
+				48BAECB51A962FC1008C4BB7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		48BAECE01A96307F008C4BB7 /* Build configuration list for PBXNativeTarget "RemoteIOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48BAECE11A96307F008C4BB7 /* Debug */,
+				48BAECE21A96307F008C4BB7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		48BAED071A9630BB008C4BB7 /* Build configuration list for PBXNativeTarget "RemoteOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				48BAED081A9630BB008C4BB7 /* Debug */,
+				48BAED091A9630BB008C4BB7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 48BAEC8B1A962FC1008C4BB7 /* Project object */;
+}
