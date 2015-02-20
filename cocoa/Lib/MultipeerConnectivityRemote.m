@@ -14,19 +14,20 @@
 
 @property (nonatomic, strong) NSMutableSet *activePeersSet;
 @property (nonatomic, strong) NSMutableSet *invitingPeersSet;
-@property (nonatomic, strong) NSMutableSet *connectedPeersSet;
+@property (nonatomic, strong) NSMutableSet *connectedPeerRemotes;
+@property (nonatomic, strong) NSMutableSet *connectedPeerRemoteRecipients;
 
 @property (nonatomic, strong) MCNearbyServiceAdvertiser *advertiser;
 @property (nonatomic, strong) MCSession *advertiserSession;
-
 @property (nonatomic, strong) MCNearbyServiceBrowser *browser;
 @property (nonatomic, strong) MCSession *browserSession;
 
 @property (nonatomic, strong) MCPeerID *localPeerID;
 
 
-@property (nonatomic, strong) NSMutableDictionary *peerIDHashToInviteBlock;
+@property (nonatomic, strong) NSMutableDictionary *peerIDHashToConnectionBlock;
 @property (nonatomic, strong) NSMutableDictionary *invitationIDToInviteResponseBlock;
+
 
 @end
 
@@ -52,7 +53,7 @@
 
 -(BOOL)hasConnectedSessionForPeer:(MCPeerID *)peerID
 {
-    return [self.connectedPeersSet containsObject:peerID];
+    return [self.connectedPeerRemotes containsObject:peerID] || [self.connectedPeerRemoteRecipients containsObject:peerID];
 }
 
 -(BOOL)isAwaitingInviteResponseForPeer:(MCPeerID *)peerID
@@ -60,7 +61,7 @@
     return [self.invitingPeersSet containsObject:peerID];
 }
 
--(void)invitePeer:(MCPeerID *)peerID invitationMessage:(NSString *)invitationMessage responseBlock:(void(^)(BOOL accepted))responseBlock
+-(void)invitePeer:(MCPeerID *)peerID invitationMessage:(NSString *)invitationMessage connectionBlock:(void(^)(BOOL connected))connectionBlock
 {
     
     if ([self isAwaitingInviteResponseForPeer:peerID]) {
@@ -68,8 +69,8 @@
     }
     
     
-    if (responseBlock) {
-        self.peerIDHashToInviteBlock[@(peerID.hash)] = responseBlock;
+    if (connectionBlock) {
+        self.peerIDHashToConnectionBlock[@(peerID.hash)] = connectionBlock;
     }
     
     [self.invitingPeersSet addObject:peerID];
@@ -82,12 +83,42 @@
     
 }
 
--(void)respondToInvite:(NSString *)inviteID accept:(BOOL)accept
+-(void)respondToInvite:(NSString *)inviteID fromPeer:(MCPeerID *)peerID accept:(BOOL)accept connectionBlock:(void(^)(BOOL connected))connectionBlock
 {
+    if (accept && connectionBlock) {//if the receipient rejects the connection request then the connectionBlock will never get fired and so will be ignored here
+        self.peerIDHashToConnectionBlock[@(peerID.hash)] = connectionBlock;
+    }
+    
     void (^invitationHandler)(BOOL accept, MCSession *session) = self.invitationIDToInviteResponseBlock[inviteID];
     
     invitationHandler(accept,self.advertiserSession);
     [self.invitationIDToInviteResponseBlock removeObjectForKey:inviteID];
+}
+
+-(void)sendInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID
+{
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:info];
+    
+    NSArray *peers;
+    
+    if (peerID) {
+         NSAssert([self hasConnectedSessionForPeer:peerID], @"Attempted to send data to a peer without a connected session");
+        peers = @[peerID];
+    }
+    else {
+        peers = [[self.connectedPeerRemotes allObjects] arrayByAddingObjectsFromArray:[self.connectedPeerRemoteRecipients allObjects]];
+    }
+    
+    NSError *error = nil;
+    
+    MCSession *session = [self.connectedPeerRemotes containsObject:peerID] ? self.advertiserSession : self.browserSession;
+    
+    [session sendData:data toPeers:peers withMode:MCSessionSendDataReliable error:&error];
+    
+    if (error != nil) {
+        NSLog(@"Error sending data to peers: %@",error);
+    }
+    
 }
 
 #pragma mark Private API
@@ -169,6 +200,7 @@
     return _localPeerID;
 }
 
+
 -(MCSession *) advertiserSession
 {
     if (_advertiserSession == nil) {
@@ -230,12 +262,20 @@
     return _activePeersSet;
 }
 
--(NSMutableSet *)connectedPeersSet
+-(NSMutableSet *)connectedPeerRemotes
 {
-    if (_connectedPeersSet == nil) {
-        _connectedPeersSet = [NSMutableSet new];
+    if (_connectedPeerRemotes == nil) {
+        _connectedPeerRemotes = [NSMutableSet new];
     }
-    return _connectedPeersSet;
+    return _connectedPeerRemotes;
+}
+
+-(NSMutableSet *)connectedPeerRemoteRecipients
+{
+    if (_connectedPeerRemoteRecipients == nil) {
+        _connectedPeerRemoteRecipients = [NSMutableSet new];
+    }
+    return _connectedPeerRemoteRecipients;
 }
 
 -(NSMutableSet *)invitingPeersSet
@@ -248,12 +288,12 @@
 
 
 
--(NSMutableDictionary *)peerIDHashToInviteBlock
+-(NSMutableDictionary *)peerIDHashToConnectionBlock
 {
-    if (_peerIDHashToInviteBlock == nil) {
-        _peerIDHashToInviteBlock = [NSMutableDictionary new];
+    if (_peerIDHashToConnectionBlock == nil) {
+        _peerIDHashToConnectionBlock = [NSMutableDictionary new];
     }
-    return _peerIDHashToInviteBlock;
+    return _peerIDHashToConnectionBlock;
 }
 
 -(NSMutableDictionary *)invitationIDToInviteResponseBlock
@@ -314,18 +354,9 @@
     
     self.invitationIDToInviteResponseBlock[uuid] = invitationHandler;
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice object:self userInfo:@{@"invitationMessage":invitationMessage,@"inviteID":uuid}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice object:self userInfo:@{@"invitationMessage":invitationMessage,@"inviteID":uuid,@"peerID":peerID}];
     
-    
-    //void (^ih)(BOOL accept, MCSession *session) = self.invitationIDToInviteResponseBlock[uuid];
-    
-    
-  //  NSLog(@"ih: %@",ih);
-   // NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice
-    
-    //invitationHandler(YES,self.advertiserSession);
-    
-    
+
 }
 
 
@@ -340,15 +371,12 @@
 
 -(void) shareEventMessage:(NSString *)message
 {
-    
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(shareEventMessage:) withObject:message waitUntilDone:NO];
-        return;
-    }
-    
-    NSLog(@"%@",message);
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityEvent object:self userInfo:@{@"message":message}];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSLog(@"%@",message);
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityEvent object:self userInfo:@{@"message":message}];
+    });
 }
 
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
@@ -362,8 +390,7 @@
         case MCSessionStateConnected:
             // NSLog(@"Session Connected!");
             [self shareEventMessage:[NSString stringWithFormat:@"%@ connected",peerID.displayName]];
-
-            [self handleSessionConnectionSucceeded:peerID];
+            [self handleSessionConnectionSucceeded:peerID isARemote:session==self.advertiserSession];
             break;
         case MCSessionStateNotConnected:
             [self shareEventMessage:[NSString stringWithFormat:@"%@ disconnected",peerID.displayName]];
@@ -377,48 +404,49 @@
     
 }
 
--(void) handleSessionConnectionSucceeded:(MCPeerID *)peerID {
+-(void) handleSessionConnectionSucceeded:(MCPeerID *)peerID isARemote:(BOOL)isARemote {
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        void (^connectionBlock)(BOOL accept) = self.peerIDHashToConnectionBlock[@(peerID.hash)];
+        
+        
+        [self.invitingPeersSet removeObject:peerID];
+        
+        if (isARemote) {
+            [self.connectedPeerRemotes addObject:peerID];
+        }
+        else {
+            [self.connectedPeerRemoteRecipients addObject:peerID];
+        }
+  
+        
+        if (connectionBlock) {
+            connectionBlock(YES);
+            [self.peerIDHashToConnectionBlock removeObjectForKey:@(peerID.hash)];
+        }
+    });
     
     
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(handleSessionConnectionSucceeded:) withObject:peerID waitUntilDone:NO];
-        return;
-    }
     
-    void (^responseBlock)(BOOL accept) = self.peerIDHashToInviteBlock[@(peerID.hash)];
-    
- 
-    [self.invitingPeersSet removeObject:peerID];
-    
-    [self.connectedPeersSet addObject:peerID];
- 
-    
-    
-    if (responseBlock) {
-        responseBlock(YES);
-        [self.peerIDHashToInviteBlock removeObjectForKey:@(peerID.hash)];
-    }
     
 }
 
 -(void) handleSessionConnectionFailed:(MCPeerID *)peerID {
     
+    dispatch_async(dispatch_get_main_queue(), ^{
+        void (^connectionBlock)(BOOL accept) = self.peerIDHashToConnectionBlock[@(peerID.hash)];
+        
+        
+        [self.invitingPeersSet removeObject:peerID];
+        
+        
+        if (connectionBlock) {
+            connectionBlock(NO);
+            [self.peerIDHashToConnectionBlock removeObjectForKey:@(peerID.hash)];
+        }
+    });
+
     
-    if (![NSThread isMainThread]) {
-        [self performSelectorOnMainThread:@selector(handleSessionConnectionFailed:) withObject:peerID waitUntilDone:NO];
-        return;
-    }
-    
-    void (^responseBlock)(BOOL accept) = self.peerIDHashToInviteBlock[@(peerID.hash)];
-    
-    
-    [self.invitingPeersSet removeObject:peerID];
-    
-    
-    if (responseBlock) {
-        responseBlock(NO);
-        [self.peerIDHashToInviteBlock removeObjectForKey:@(peerID.hash)];
-    }
     
 }
 
@@ -426,12 +454,16 @@
 // Received data from remote peer
 - (void)session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID
 {
-    NSLog(@"session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID");
     
-    NSString *message =
-    [[NSString alloc] initWithData:data
-                          encoding:NSUTF8StringEncoding];
-    [self shareEventMessage:message];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSDictionary *info = (NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        
+        [self shareEventMessage:[NSString stringWithFormat:@"Received info from %@\n%@",peerID.displayName,info[@"m"]]];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice object:self userInfo:@{@"info":info,@"peerID":peerID}];
+    });
+    
+    
     
 }
 

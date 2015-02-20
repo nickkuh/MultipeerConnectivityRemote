@@ -11,8 +11,11 @@
 
 #define NotificationMultipeerConnectivityActivePeersChanged                                 @"NotificationMultipeerConnectivityActivePeersChanged"
 #define NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice                 @"NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice"
+#define NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice                       @"NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice"
 
 #define NotificationMultipeerConnectivityEvent                                              @"NotificationMultipeerConnectivityEvent"
+
+
 
 
 @interface MultipeerConnectivityRemote : NSObject
@@ -39,7 +42,19 @@
 
 //Invite is intended to be sent and will either be responded to by the recipient or time-out
 //invitationMessage such as "Allow Nick's iPhone to remote control this device?"
--(void)invitePeer:(MCPeerID *)peerID invitationMessage:(NSString *)invitationMessage responseBlock:(void(^)(BOOL accepted))responseBlock;
--(void)respondToInvite:(NSString *)inviteID accept:(BOOL)accept;
+//connectionBlock will be executed as soon as the connection completes or fails
+-(void)invitePeer:(MCPeerID *)peerID invitationMessage:(NSString *)invitationMessage connectionBlock:(void(^)(BOOL connected))connectionBlock;
+
+//When a Mac or iPhone receives a connection request from a remote it responds via this method
+//If the receiving device chooses to reject the connection then the connectionBlock should be nil
+//If the receiving device chooses to accept the connection then it can optionally pass in a connectionBlock in order to execute code
+//like passing some initial data back to the remote once the connection establishes
+-(void)respondToInvite:(NSString *)inviteID fromPeer:(MCPeerID *)peerID accept:(BOOL)accept connectionBlock:(void(^)(BOOL connected))connectionBlock;
+
+
+//Both remotes and remotely controlled devices use this method to communicate custom data with other devices
+//If a peerID is specified then only that peer will be send the info dictionary
+//If nil is passed for peerID then all connected peers will be sent the info dictionary
+-(void)sendInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID;
 
 @end

@@ -9,9 +9,13 @@
 #import "AvailableDevicesViewController.h"
 #import "MultipeerConnectivityRemote.h"
 
-@interface AvailableDevicesViewController ()
+@interface AvailableDevicesViewController ()<UIAlertViewDelegate>
+
+@property (nonatomic, strong) NSMutableDictionary *responses;
 
 @end
+
+static int tag = 1;
 
 @implementation AvailableDevicesViewController
 
@@ -20,8 +24,16 @@
     //NotificationMultipeerConnectivityActivePeersChanged
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotificationMultipeerConnectivityActivePeersChanged:) name:NotificationMultipeerConnectivityActivePeersChanged object:[MultipeerConnectivityRemote shared]];
+    
+    
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice:) name:NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice object:[MultipeerConnectivityRemote shared]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice:) name:NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice object:[MultipeerConnectivityRemote shared]];
+    
    [MultipeerConnectivityRemote shared].serviceType = @"myapp-service";
     [MultipeerConnectivityRemote shared].isAdvertisingAndBrowsing = YES;//Start browsing and advertising...
+    
+    self.responses = [NSMutableDictionary new];
 }
 
 -(id) initWithCoder:(NSCoder *)aDecoder
@@ -54,6 +66,10 @@
 -(void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (IBAction)refreshTapped:(id)sender {
+    [self.tableView reloadData];
 }
 
 - (void)viewDidLoad {
@@ -89,8 +105,8 @@
     cell.textLabel.text = peerID.displayName;
     
     if ([[MultipeerConnectivityRemote shared] hasConnectedSessionForPeer:peerID]) {
-        cell.detailTextLabel.text = @"Connected";
-        cell.accessoryType = UITableViewCellAccessoryNone;
+        cell.detailTextLabel.text = @"";
+        cell.accessoryType = UITableViewCellAccessoryCheckmark;
         cell.accessoryView = nil;
     }
     else {
@@ -105,6 +121,7 @@
         }
         else {
             //Available to connect
+            cell.accessoryView = nil;
             cell.detailTextLabel.text = @"Connect";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
@@ -119,18 +136,21 @@
     
     MCPeerID *peerID = [MultipeerConnectivityRemote shared].activePeers[indexPath.row];
     
-    if (![[MultipeerConnectivityRemote shared] hasConnectedSessionForPeer:peerID] && ![[MultipeerConnectivityRemote shared] isAwaitingInviteResponseForPeer:peerID]) {
+    if ([[MultipeerConnectivityRemote shared] hasConnectedSessionForPeer:peerID]) {
+        [[MultipeerConnectivityRemote shared] sendInfo:@{@"m":@"Pong!"} toPeer:peerID];
+    }
+    else if (![[MultipeerConnectivityRemote shared] isAwaitingInviteResponseForPeer:peerID]) {
         
         __weak AvailableDevicesViewController *weakSelf = self;
         
-        [[MultipeerConnectivityRemote shared] invitePeer:peerID invitationMessage:[NSString stringWithFormat:@"Allow %@  to remote control your device?",[MultipeerConnectivityRemote shared].displayName] responseBlock:^(BOOL accepted) {
-            if (accepted) {
+        [[MultipeerConnectivityRemote shared] invitePeer:peerID invitationMessage:[NSString stringWithFormat:@"Allow %@  to remote control your device?",[MultipeerConnectivityRemote shared].displayName] connectionBlock:^(BOOL connected) {
+            if (connected) {
                 NSLog(@"Accepted & connected!");
             }
             else {
                 NSLog(@"Failed to connect!");
             }
-            [weakSelf.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [weakSelf.tableView reloadData];
         }];
         
         [weakSelf.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -142,6 +162,90 @@
 -(void) handleNotificationMultipeerConnectivityActivePeersChanged:(NSNotification *)notification
 {
     [self.tableView reloadData];
+}
+
+-(void) handleNotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice:(NSNotification *)notification
+{
+    
+    
+    MCPeerID *peerID = notification.userInfo[@"peerID"];
+    NSString *inviteID = notification.userInfo[@"inviteID"];
+    
+    UIAlertView *av = [[UIAlertView alloc] initWithTitle:@"" message:[NSString stringWithFormat:@"%@", notification.userInfo[@"invitationMessage"]] delegate:self cancelButtonTitle:@"Ignore" otherButtonTitles:@"Allow", nil];
+    av.delegate = self;
+    [av show];
+    av.tag = tag;
+    
+    self.responses[@(av.tag)] = @{@"type":@"invite",@"peerID":peerID,@"inviteID":inviteID};
+    
+    tag++;
+    
+}
+
+-(void) handleNotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice:(NSNotification *)notification
+{
+    
+    NSDictionary *info = notification.userInfo[@"info"];
+    
+    MCPeerID *peerID = notification.userInfo[@"peerID"];
+    
+    UIAlertView *av = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Info Received from %@", peerID.displayName] message:[NSString stringWithFormat:@"%@", info[@"m"]] delegate:nil cancelButtonTitle:@"Done" otherButtonTitles:@"Send Pong!", nil];
+    av.delegate = self;
+    [av show];
+    av.tag = tag;
+    
+    self.responses[@(av.tag)] = @{@"type":@"info",@"peerID":peerID,@"info":@{@"m":@"Pong!"}};
+    
+    tag++;
+   
+    
+    
+    
+}
+
+#pragma mark UIAlertViewDelegate
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (alertView.tag > 0) {
+        NSDictionary *dict = self.responses[@(alertView.tag)];
+        [self.responses removeObjectForKey:@(alertView.tag)];
+         MCPeerID *peerID = dict[@"peerID"];
+        
+        NSString *type = dict[@"type"];
+        
+        
+        if ([type isEqualToString:@"invite"]) {
+            BOOL accepted = buttonIndex != alertView.cancelButtonIndex;
+            NSString *inviteID = dict[@"inviteID"];
+            if (accepted) {
+                
+                __weak AvailableDevicesViewController *weakSelf = self;
+                
+                [[MultipeerConnectivityRemote shared] respondToInvite:inviteID fromPeer:peerID accept:YES connectionBlock:^(BOOL connected) {
+                    if (connected) {
+                        [weakSelf.tableView reloadData];
+                        NSLog(@"We are now being controlled by a remote: %@",peerID.displayName);
+                        NSLog(@"Send back some initial syncronisation instruction?");
+                        [[MultipeerConnectivityRemote shared] sendInfo:@{@"m":@"Welcome, you've connected successfully - what do you want me to do?!"} toPeer:peerID];
+                    }
+                }];
+            }
+            else {
+                [[MultipeerConnectivityRemote shared] respondToInvite:inviteID fromPeer:peerID accept:NO connectionBlock:nil];
+            }
+        }
+        if ([type isEqualToString:@"info"]) {
+            if (buttonIndex != alertView.cancelButtonIndex) {
+                if ([[MultipeerConnectivityRemote shared] hasConnectedSessionForPeer:peerID]) {
+                    [[MultipeerConnectivityRemote shared] sendInfo:dict[@"info"] toPeer:peerID];
+                }
+            }
+           
+        }
+        
+        
+    }
 }
 
 @end
