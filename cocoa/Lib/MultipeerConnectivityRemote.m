@@ -18,16 +18,18 @@
 @property (nonatomic, strong) NSMutableSet *connectedPeerRemoteRecipients;
 
 @property (nonatomic, strong) MCNearbyServiceAdvertiser *advertiser;
-@property (nonatomic, strong) MCSession *advertiserSession;
 @property (nonatomic, strong) MCNearbyServiceBrowser *browser;
-@property (nonatomic, strong) MCSession *browserSession;
 
 @property (nonatomic, strong) MCPeerID *localPeerID;
 
+@property (nonatomic, strong) MCSession *locallyOwnedSession;
+
+@property (nonatomic, strong) MCSession *advertiserSession;
+@property (nonatomic, strong) MCSession *browserSession;
 
 @property (nonatomic, strong) NSMutableDictionary *peerIDHashToConnectionBlock;
 @property (nonatomic, strong) NSMutableDictionary *invitationIDToInviteResponseBlock;
-
+@property (nonatomic, strong) NSMutableDictionary *peerIDHashToSession;
 
 @end
 
@@ -79,6 +81,7 @@
     
     NSData *data = [invitationMessage dataUsingEncoding:NSUTF8StringEncoding];
     
+    
     [self.browser invitePeer:peerID toSession:self.browserSession withContext:data timeout:0];
     
 }
@@ -90,6 +93,9 @@
     }
     
     void (^invitationHandler)(BOOL accept, MCSession *session) = self.invitationIDToInviteResponseBlock[inviteID];
+    
+   // MCSession *session = [self createASessionForPeer:self.localPeerID];
+   // self.peerIDHashToSession[@(peerID.hash)] = session;
     
     invitationHandler(accept,self.advertiserSession);
     [self.invitationIDToInviteResponseBlock removeObjectForKey:inviteID];
@@ -109,15 +115,21 @@
         peers = [[self.connectedPeerRemotes allObjects] arrayByAddingObjectsFromArray:[self.connectedPeerRemoteRecipients allObjects]];
     }
     
-    NSError *error = nil;
+    __block NSError *error = nil;
+    __block MCPeerID *tmpPeerID;
+    __block MCSession *session;
     
-    MCSession *session = [self.connectedPeerRemotes containsObject:peerID] ? self.advertiserSession : self.browserSession;
+    [peers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        tmpPeerID = (MCPeerID *)obj;
+        session = [self sessionForPeer:tmpPeerID];
+        
+        [session sendData:data toPeers:@[tmpPeerID] withMode:MCSessionSendDataReliable error:&error];
+        
+        if (error != nil) {
+            NSLog(@"Error sending data to peer %@: %@",tmpPeerID.displayName,error);
+        }
+    }];
     
-    [session sendData:data toPeers:peers withMode:MCSessionSendDataReliable error:&error];
-    
-    if (error != nil) {
-        NSLog(@"Error sending data to peers: %@",error);
-    }
     
 }
 
@@ -201,13 +213,18 @@
 }
 
 
+-(MCSession *) locallyOwnedSession
+{
+    if (_locallyOwnedSession == nil) {
+        _locallyOwnedSession = [self createASessionForPeer:self.localPeerID];
+    }
+    return _locallyOwnedSession;
+}
+
 -(MCSession *) advertiserSession
 {
     if (_advertiserSession == nil) {
-        _advertiserSession = [[MCSession alloc] initWithPeer:self.localPeerID
-                                            securityIdentity:nil
-                                        encryptionPreference:MCEncryptionNone];
-        _advertiserSession.delegate = self;
+        _advertiserSession = [self createASessionForPeer:self.localPeerID];
     }
     return _advertiserSession;
 }
@@ -215,14 +232,26 @@
 -(MCSession *) browserSession
 {
     if (_browserSession == nil) {
-        _browserSession = [[MCSession alloc] initWithPeer:self.localPeerID
-                                         securityIdentity:nil
-                                     encryptionPreference:MCEncryptionNone];
-        _browserSession.delegate = self;
+        _browserSession = [self createASessionForPeer:self.localPeerID];
     }
     return _browserSession;
 }
 
+-(MCSession *) sessionForPeer:(MCPeerID *)peerID
+{
+    MCSession *session = self.peerIDHashToSession[@(peerID.hash)];
+    return session;
+}
+
+
+-(MCSession *) createASessionForPeer:(MCPeerID *)peerID
+{
+    MCSession *session = [[MCSession alloc] initWithPeer:peerID
+                             securityIdentity:nil
+                         encryptionPreference:MCEncryptionNone];
+    session.delegate = self;
+    return session;
+}
 
 -(NSString *)serviceType
 {
@@ -294,6 +323,14 @@
         _peerIDHashToConnectionBlock = [NSMutableDictionary new];
     }
     return _peerIDHashToConnectionBlock;
+}
+
+-(NSMutableDictionary *)peerIDHashToSession
+{
+    if (_peerIDHashToSession == nil) {
+        _peerIDHashToSession = [NSMutableDictionary new];
+    }
+    return _peerIDHashToSession;
 }
 
 -(NSMutableDictionary *)invitationIDToInviteResponseBlock
@@ -388,11 +425,24 @@
             NSLog(@"Session Connecting....");
             break;
         case MCSessionStateConnected:
+        {
             // NSLog(@"Session Connected!");
+           // MCSession *mySession = [self sessionForPeer:peerID];
+            
+            BOOL isARemote = NO;
+            if (self.browserSession == session) {
+                isARemote = YES;
+            }
+
+            
             [self shareEventMessage:[NSString stringWithFormat:@"%@ connected",peerID.displayName]];
-            [self handleSessionConnectionSucceeded:peerID isARemote:session==self.advertiserSession];
+            [self handleSessionConnectionSucceeded:peerID isARemote:isARemote session:session];
             break;
+        }
         case MCSessionStateNotConnected:
+            
+            
+            
             [self shareEventMessage:[NSString stringWithFormat:@"%@ disconnected",peerID.displayName]];
             [self handleSessionConnectionFailed:peerID];
 
@@ -404,9 +454,12 @@
     
 }
 
--(void) handleSessionConnectionSucceeded:(MCPeerID *)peerID isARemote:(BOOL)isARemote {
+-(void) handleSessionConnectionSucceeded:(MCPeerID *)peerID isARemote:(BOOL)isARemote session:(MCSession *)session {
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        self.peerIDHashToSession[@(peerID.hash)] = session;
+        
         void (^connectionBlock)(BOOL accept) = self.peerIDHashToConnectionBlock[@(peerID.hash)];
         
         
@@ -436,14 +489,18 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         void (^connectionBlock)(BOOL accept) = self.peerIDHashToConnectionBlock[@(peerID.hash)];
         
-        
+        [self.peerIDHashToSession removeObjectForKey:@(peerID.hash)];
         [self.invitingPeersSet removeObject:peerID];
+        [self.connectedPeerRemotes removeObject:peerID];
+        [self.connectedPeerRemoteRecipients removeObject:peerID];
         
         
         if (connectionBlock) {
             connectionBlock(NO);
             [self.peerIDHashToConnectionBlock removeObjectForKey:@(peerID.hash)];
         }
+        
+        [self notififyActivePeersChanged];
     });
 
     
