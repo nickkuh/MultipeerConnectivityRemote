@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		489251E71A9B480B00CDC259 /* MultipeerConnectivityRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 489251E61A9B480B00CDC259 /* MultipeerConnectivityRemote.m */; };
+		489251E81A9B480B00CDC259 /* MultipeerConnectivityRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 489251E61A9B480B00CDC259 /* MultipeerConnectivityRemote.m */; };
 		48BAECC51A96307F008C4BB7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAECC41A96307F008C4BB7 /* main.m */; };
 		48BAECC81A96307F008C4BB7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAECC71A96307F008C4BB7 /* AppDelegate.m */; };
 		48BAECCE1A96307F008C4BB7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECCC1A96307F008C4BB7 /* Main.storyboard */; };
@@ -16,13 +18,13 @@
 		48BAECF21A9630BB008C4BB7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAECF11A9630BB008C4BB7 /* main.m */; };
 		48BAECF71A9630BB008C4BB7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECF61A9630BB008C4BB7 /* Images.xcassets */; };
 		48BAECFA1A9630BB008C4BB7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 48BAECF81A9630BB008C4BB7 /* Main.storyboard */; };
-		48BAED101A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */; };
-		48BAED111A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */; };
 		48BAED141A9631CE008C4BB7 /* AvailableDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED131A9631CE008C4BB7 /* AvailableDevicesViewController.m */; };
 		48BAED171A96422F008C4BB7 /* MacViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 48BAED161A96422F008C4BB7 /* MacViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		489251E51A9B480B00CDC259 /* MultipeerConnectivityRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultipeerConnectivityRemote.h; sourceTree = "<group>"; };
+		489251E61A9B480B00CDC259 /* MultipeerConnectivityRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultipeerConnectivityRemote.m; sourceTree = "<group>"; };
 		48BAECC01A96307F008C4BB7 /* RemoteIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RemoteIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		48BAECC31A96307F008C4BB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		48BAECC41A96307F008C4BB7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -38,8 +40,6 @@
 		48BAECF11A9630BB008C4BB7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		48BAECF61A9630BB008C4BB7 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		48BAECF91A9630BB008C4BB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		48BAED0E1A96315A008C4BB7 /* MultipeerConnectivityRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultipeerConnectivityRemote.h; sourceTree = "<group>"; };
-		48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultipeerConnectivityRemote.m; sourceTree = "<group>"; };
 		48BAED121A9631CE008C4BB7 /* AvailableDevicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AvailableDevicesViewController.h; sourceTree = "<group>"; };
 		48BAED131A9631CE008C4BB7 /* AvailableDevicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AvailableDevicesViewController.m; sourceTree = "<group>"; };
 		48BAED151A96422F008C4BB7 /* MacViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacViewController.h; sourceTree = "<group>"; };
@@ -65,10 +65,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		489251E41A9B480B00CDC259 /* MultipeerConnectivityLib */ = {
+			isa = PBXGroup;
+			children = (
+				489251E51A9B480B00CDC259 /* MultipeerConnectivityRemote.h */,
+				489251E61A9B480B00CDC259 /* MultipeerConnectivityRemote.m */,
+			);
+			path = MultipeerConnectivityLib;
+			sourceTree = "<group>";
+		};
 		48BAEC8A1A962FC1008C4BB7 = {
 			isa = PBXGroup;
 			children = (
-				48BAED0D1A9630E7008C4BB7 /* Lib */,
+				489251E41A9B480B00CDC259 /* MultipeerConnectivityLib */,
 				48BAECC11A96307F008C4BB7 /* RemoteIOS */,
 				48BAECEB1A9630BB008C4BB7 /* RemoteOSX */,
 				48BAEC941A962FC1008C4BB7 /* Products */,
@@ -130,15 +139,6 @@
 				48BAECF11A9630BB008C4BB7 /* main.m */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		48BAED0D1A9630E7008C4BB7 /* Lib */ = {
-			isa = PBXGroup;
-			children = (
-				48BAED0E1A96315A008C4BB7 /* MultipeerConnectivityRemote.h */,
-				48BAED0F1A96315A008C4BB7 /* MultipeerConnectivityRemote.m */,
-			);
-			path = Lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,7 +248,7 @@
 			files = (
 				48BAED141A9631CE008C4BB7 /* AvailableDevicesViewController.m in Sources */,
 				48BAECC81A96307F008C4BB7 /* AppDelegate.m in Sources */,
-				48BAED101A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */,
+				489251E71A9B480B00CDC259 /* MultipeerConnectivityRemote.m in Sources */,
 				48BAECC51A96307F008C4BB7 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,8 +258,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				48BAECF21A9630BB008C4BB7 /* main.m in Sources */,
-				48BAED111A96315A008C4BB7 /* MultipeerConnectivityRemote.m in Sources */,
 				48BAED171A96422F008C4BB7 /* MacViewController.m in Sources */,
+				489251E81A9B480B00CDC259 /* MultipeerConnectivityRemote.m in Sources */,
 				48BAECF01A9630BB008C4BB7 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -450,6 +450,7 @@
 				48BAECE21A96307F008C4BB7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		48BAED071A9630BB008C4BB7 /* Build configuration list for PBXNativeTarget "RemoteOSX" */ = {
 			isa = XCConfigurationList;
@@ -458,6 +459,7 @@
 				48BAED091A9630BB008C4BB7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
