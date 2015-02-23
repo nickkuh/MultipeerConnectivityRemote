@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AvailableDevicesViewController : UITableViewController
+@interface AvailableDevicesViewController : UIViewController
 
 @end

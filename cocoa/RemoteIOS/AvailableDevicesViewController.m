@@ -9,10 +9,12 @@
 #import "AvailableDevicesViewController.h"
 #import "MultipeerConnectivityRemote.h"
 
-@interface AvailableDevicesViewController ()<UIAlertViewDelegate>
+@interface AvailableDevicesViewController ()<UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate>
 
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) NSMutableDictionary *responses;
 @property (weak, nonatomic) IBOutlet UISwitch *advertisingSwitch;
+@property (weak, nonatomic) IBOutlet UIView *noPeersView;
 
 
 @end
@@ -56,16 +58,6 @@ static int tag = 1;
     return self;
 }
 
--(id) initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        [self setup];
-    }
-    return self;
-}
-
-
 
 -(void) dealloc
 {
@@ -77,6 +69,12 @@ static int tag = 1;
     [super viewDidLoad];
     
     self.advertisingSwitch.on = [MultipeerConnectivityRemote shared].isAdvertising;
+}
+
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self reloadData];
 }
 
 - (IBAction)switchToggled:(id)sender {
@@ -92,6 +90,22 @@ static int tag = 1;
     [MultipeerConnectivityRemote shared].isAdvertising = advertisingBefore;
     [MultipeerConnectivityRemote shared].isBrowsing = browsingBefore;
     
+}
+
+-(void)reloadData
+{
+   
+    BOOL hasActivePeers = [MultipeerConnectivityRemote shared].activePeers.count > 0;
+    
+    if(hasActivePeers) {
+        [self.tableView reloadData];
+    }
+    
+    self.tableView.hidden = !hasActivePeers;
+    self.noPeersView.hidden = hasActivePeers;
+    
+    
+
 }
 
 #pragma mark - Table view data source
@@ -154,7 +168,7 @@ static int tag = 1;
             else {
                 NSLog(@"Failed to connect!");
             }
-            [weakSelf.tableView reloadData];
+            [weakSelf reloadData];
         }];
         
         [weakSelf.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -165,7 +179,7 @@ static int tag = 1;
 
 -(void) handleNotificationMultipeerConnectivityActivePeersChanged:(NSNotification *)notification
 {
-    [self.tableView reloadData];
+    [self reloadData];
 }
 
 -(void) handleNotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice:(NSNotification *)notification
@@ -228,7 +242,7 @@ static int tag = 1;
                 
                 [[MultipeerConnectivityRemote shared] respondToInvite:inviteID fromPeer:peerID accept:YES connectionBlock:^(BOOL connected) {
                     if (connected) {
-                        [weakSelf.tableView reloadData];
+                        [weakSelf reloadData];
                         NSLog(@"We are now being controlled by a remote: %@",peerID.displayName);
                         NSLog(@"Send back some initial syncronisation instruction?");
                         [[MultipeerConnectivityRemote shared] sendInfo:@{@"m":@"Welcome, you've connected successfully - what do you want me to do?!"} toPeer:peerID];
