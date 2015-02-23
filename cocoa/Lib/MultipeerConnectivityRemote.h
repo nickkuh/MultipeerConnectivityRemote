@@ -13,6 +13,7 @@
 #define NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice                 @"NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice"
 #define NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice                       @"NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice"
 
+
 #define NotificationMultipeerConnectivityEvent                                              @"NotificationMultipeerConnectivityEvent"
 
 
@@ -29,7 +30,8 @@
 @property (nonatomic, strong) NSString *serviceType;
 
 //Devices connect to one another by advertising and finding one another. isAdvertisingAndBrowsing needs to be true for this device to find others and let others know of it's existance
-@property (nonatomic) BOOL isAdvertisingAndBrowsing;
+@property (nonatomic) BOOL isAdvertising;
+@property (nonatomic) BOOL isBrowsing;
 
 //Lists all compatible MCPeerIDs detected in the network - some connected and some not connected
 @property (nonatomic, strong, readonly) NSArray *activePeers;

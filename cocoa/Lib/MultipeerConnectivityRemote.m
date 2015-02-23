@@ -77,7 +77,6 @@
     
     [self.invitingPeersSet addObject:peerID];
     
-    //[self.advertiser initWithPeer:peerID discoveryInfo:@{@"m":invitationMessage} serviceType:self.serviceType];
     
     NSData *data = [invitationMessage dataUsingEncoding:NSUTF8StringEncoding];
     
@@ -93,9 +92,6 @@
     }
     
     void (^invitationHandler)(BOOL accept, MCSession *session) = self.invitationIDToInviteResponseBlock[inviteID];
-    
-   // MCSession *session = [self createASessionForPeer:self.localPeerID];
-   // self.peerIDHashToSession[@(peerID.hash)] = session;
     
     invitationHandler(accept,self.advertiserSession);
     [self.invitationIDToInviteResponseBlock removeObjectForKey:inviteID];
@@ -150,21 +146,35 @@
 }
 
 
--(void) setIsAdvertisingAndBrowsing:(BOOL)isAdvertisingAndBrowsing
+-(void) setIsAdvertising:(BOOL)isAdvertising
 {
-    if (_isAdvertisingAndBrowsing == isAdvertisingAndBrowsing) {
+    if (_isAdvertising == isAdvertising) {
         return;
     }
     
-    _isAdvertisingAndBrowsing = isAdvertisingAndBrowsing;
+    _isAdvertising = isAdvertising;
     
-    if (_isAdvertisingAndBrowsing) {
+    if (_isAdvertising) {
         [self.advertiser startAdvertisingPeer];
+    }
+    else {
+        [self.advertiser stopAdvertisingPeer];
+    }
+}
+
+-(void) setIsBrowsing:(BOOL)isBrowsing
+{
+    if (_isBrowsing == isBrowsing) {
+        return;
+    }
+    
+    _isBrowsing = isBrowsing;
+    
+    if (_isBrowsing) {
         [self.browser startBrowsingForPeers];
     }
     else {
         [self.browser stopBrowsingForPeers];
-        [self.advertiser stopAdvertisingPeer];
         
         [self.activePeersSet removeAllObjects];
         [self notififyActivePeersChanged];
@@ -379,7 +389,6 @@
 // Incoming invitation request.  Call the invitationHandler block with YES and a valid session to connect the inviting peer to the session.
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler
 {
-    //NSLog(@"advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void(^)(BOOL accept, MCSession *session))invitationHandler");
     
     NSString *invitationMessage =
     [[NSString alloc] initWithData:context

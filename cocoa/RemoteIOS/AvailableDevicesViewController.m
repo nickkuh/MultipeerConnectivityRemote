@@ -12,6 +12,8 @@
 @interface AvailableDevicesViewController ()<UIAlertViewDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary *responses;
+@property (weak, nonatomic) IBOutlet UISwitch *advertisingSwitch;
+
 
 @end
 
@@ -31,7 +33,7 @@ static int tag = 1;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice:) name:NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice object:[MultipeerConnectivityRemote shared]];
     
    [MultipeerConnectivityRemote shared].serviceType = @"myapp-service";
-    [MultipeerConnectivityRemote shared].isAdvertisingAndBrowsing = YES;//Start browsing and advertising...
+    [MultipeerConnectivityRemote shared].isAdvertising =  [MultipeerConnectivityRemote shared].isBrowsing = YES;//Start browsing and advertising...
     
     self.responses = [NSMutableDictionary new];
 }
@@ -63,28 +65,33 @@ static int tag = 1;
     return self;
 }
 
+
+
 -(void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (IBAction)refreshTapped:(id)sender {
-    [self.tableView reloadData];
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-    
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    self.advertisingSwitch.on = [MultipeerConnectivityRemote shared].isAdvertising;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)switchToggled:(id)sender {
+    [MultipeerConnectivityRemote shared].isAdvertising = self.advertisingSwitch.on;
+}
+
+- (IBAction)refreshTapped:(id)sender {
+    BOOL advertisingBefore = [MultipeerConnectivityRemote shared].isAdvertising;
+    BOOL browsingBefore = [MultipeerConnectivityRemote shared].isBrowsing;
+    
+    [MultipeerConnectivityRemote shared].isAdvertising = [MultipeerConnectivityRemote shared].isBrowsing = NO;
+    
+    [MultipeerConnectivityRemote shared].isAdvertising = advertisingBefore;
+    [MultipeerConnectivityRemote shared].isBrowsing = browsingBefore;
+    
 }
 
 #pragma mark - Table view data source
@@ -105,14 +112,12 @@ static int tag = 1;
     cell.textLabel.text = peerID.displayName;
     
     if ([[MultipeerConnectivityRemote shared] hasConnectedSessionForPeer:peerID]) {
-        cell.detailTextLabel.text = @"";
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
         cell.accessoryView = nil;
     }
     else {
         //either inviting or not connected
         if ([[MultipeerConnectivityRemote shared] isAwaitingInviteResponseForPeer:peerID]) {
-            cell.detailTextLabel.text = @"";
             cell.accessoryType = UITableViewCellAccessoryNone;
             
             UIActivityIndicatorView *av = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
@@ -122,7 +127,6 @@ static int tag = 1;
         else {
             //Available to connect
             cell.accessoryView = nil;
-            cell.detailTextLabel.text = @"Connect";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         }
     }

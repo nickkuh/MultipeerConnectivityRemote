@@ -18,7 +18,7 @@
 -(void) setup
 {
     [MultipeerConnectivityRemote shared].serviceType = @"myapp-service";
-    [MultipeerConnectivityRemote shared].isAdvertisingAndBrowsing = YES;
+    [MultipeerConnectivityRemote shared].isAdvertising = YES;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice:) name:NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice object:[MultipeerConnectivityRemote shared]];
     

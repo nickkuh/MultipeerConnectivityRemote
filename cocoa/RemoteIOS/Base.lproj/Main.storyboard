@@ -25,7 +25,7 @@
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Connect" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ea6-uU-r0T">
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="ea6-uU-r0T">
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                             <color key="textColor" red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="calibratedRGB"/>
@@ -41,13 +41,24 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Available Devices" id="wvq-pR-8NP">
-                        <barButtonItem key="leftBarButtonItem" systemItem="action" id="5iG-1h-7bY"/>
-                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="xmJ-qH-FeK">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="URw-kt-N2W">
+                            <switch key="customView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="JMI-LN-dgg">
+                                <rect key="frame" x="-25" y="-15" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="switchToggled:" destination="3oh-ma-hPf" eventType="valueChanged" id="Mzh-WH-iQf"/>
+                                </connections>
+                            </switch>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="KUK-sr-nEt">
                             <connections>
-                                <action selector="refreshTapped:" destination="3oh-ma-hPf" id="8J3-SN-6sm"/>
+                                <action selector="refreshTapped:" destination="3oh-ma-hPf" id="30a-b4-fqU"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="advertisingSwitch" destination="JMI-LN-dgg" id="3LK-IM-69K"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tIP-bS-vCh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
