@@ -36,6 +36,8 @@
 //Lists all compatible MCPeerIDs detected in the network - some connected and some not connected
 @property (nonatomic, strong, readonly) NSArray *activePeers;
 
+-(void) disconnectAllPeersAndSessions;
+
 //Checks if we have an active session with this peer
 -(BOOL)hasConnectedSessionForPeer:(MCPeerID *)peerID;
 

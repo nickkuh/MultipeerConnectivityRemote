@@ -60,6 +60,46 @@
     return [arr sortedArrayUsingDescriptors:@[nameDescriptor]];
 }
 
+-(void) disconnectAllPeersAndSessions
+{
+    
+    
+    NSSet *arrAllPeers = [self.connectedPeerRemotes setByAddingObjectsFromSet:self.connectedPeerRemoteRecipients];
+    
+    NSArray *allPeers = [arrAllPeers allObjects];
+    
+    __block MCPeerID *peerID;
+    
+    __block MCSession *session;
+    
+    __block NSMutableSet *allSessions = [NSMutableSet new];
+    
+    [allPeers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        peerID = obj;
+        session = [self sessionForPeer:peerID];
+        [allSessions addObject:session];
+        
+    }];
+    
+    
+    
+    [self.peerIDHashToSession removeAllObjects];
+    [self.invitingPeersSet removeAllObjects];
+    [self.connectedPeerRemotes removeAllObjects];
+    [self.connectedPeerRemoteRecipients removeAllObjects];
+    [self.peerIDHashToConnectionBlock removeAllObjects];
+    
+    NSArray *allSessionsArr = [allSessions allObjects];
+    
+    [allSessionsArr enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [session disconnect];
+        
+    }];
+  
+    [self notififyActivePeersChanged];
+
+}
+
 -(BOOL)hasConnectedSessionForPeer:(MCPeerID *)peerID
 {
     return [self.connectedPeerRemotes containsObject:peerID] || [self.connectedPeerRemoteRecipients containsObject:peerID];
@@ -608,6 +648,8 @@
 // Received data from remote peer
 - (void)session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID
 {
+    
+
     
     dispatch_async(dispatch_get_main_queue(), ^{
         NSDictionary *info = (NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:data];
