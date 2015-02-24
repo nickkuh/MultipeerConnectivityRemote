@@ -34,7 +34,8 @@ static int tag = 1;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice:) name:NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice object:[MultipeerConnectivityRemote shared]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice:) name:NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice object:[MultipeerConnectivityRemote shared]];
     
-   [MultipeerConnectivityRemote shared].serviceType = @"myapp-service";
+   //[MultipeerConnectivityRemote shared].serviceType = @"myapp-service";
+    [MultipeerConnectivityRemote shared].serviceType = @"silverback";
     [MultipeerConnectivityRemote shared].isAdvertising =  [MultipeerConnectivityRemote shared].isBrowsing = YES;//Start browsing and advertising...
     
     self.responses = [NSMutableDictionary new];

@@ -57,6 +57,9 @@
 //Both remotes and remotely controlled devices use this method to communicate custom data with other devices
 //If a peerID is specified then only that peer will be send the info dictionary
 //If nil is passed for peerID then all connected peers will be sent the info dictionary
--(void)sendInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID;
+-(void)sendInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID callbackBlock:(void(^)(BOOL succeeded, NSDictionary *responseInfo))callbackBlock;
+
+//Device A can call Device B and get a callback. Device B responds via the respondToInfo:toPeer:infoID:
+-(void)respondToInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID infoResponseID:(NSString *)infoResponseID;
 
 @end

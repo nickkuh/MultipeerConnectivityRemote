@@ -9,6 +9,7 @@
 #import "MultipeerConnectivityRemote.h"
 
 #define kMyPeerIDKey @"kMyPeerIDKey"
+#define kSendInfoResponseIDKey @"MCR_ID"
 
 @interface MultipeerConnectivityRemote()<MCNearbyServiceAdvertiserDelegate, MCNearbyServiceBrowserDelegate, MCSessionDelegate>
 
@@ -31,9 +32,13 @@
 @property (nonatomic, strong) NSMutableDictionary *invitationIDToInviteResponseBlock;
 @property (nonatomic, strong) NSMutableDictionary *peerIDHashToSession;
 
+@property (nonatomic, strong) NSMutableDictionary *sendInfoIDToInternalCallbackBlock;
+
 @end
 
 @implementation MultipeerConnectivityRemote
+
+@synthesize serviceType = _serviceType;
 
 +(MultipeerConnectivityRemote *)shared
 {
@@ -43,6 +48,8 @@
     }
     return _shared;
 }
+
+
 
 #pragma mark Public API
 
@@ -97,19 +104,80 @@
     [self.invitationIDToInviteResponseBlock removeObjectForKey:inviteID];
 }
 
+-(void)sendInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID callbackBlock:(void(^)(BOOL succeeded, NSDictionary *responseInfo))callbackBlock
+{
+    
+    if (peerID) {
+        
+        
+        if(![self hasConnectedSessionForPeer:peerID]) {
+            NSLog(@"Abort - attempting to send data to a peer without a connected session");
+            
+            if (callbackBlock) {
+                callbackBlock(NO,nil);
+            }
+            
+            return;
+        }
+        
+        if (callbackBlock) {
+            
+            NSString *uuid = [[NSUUID UUID] UUIDString];
+            
+            dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 15.0);
+            dispatch_after(delay, dispatch_get_main_queue(), ^(void){
+               
+                
+                if (self.sendInfoIDToInternalCallbackBlock[uuid]) {
+                     NSLog(@"Timeout...");
+                    void (^responseHandler)(BOOL succeeded, NSDictionary *responseInfo) = self.sendInfoIDToInternalCallbackBlock[uuid];
+                    
+                    [self.sendInfoIDToInternalCallbackBlock removeObjectForKey:uuid];
+                    
+                    responseHandler(NO,nil);
+                    
+                }
+            });
+            
+            
+            self.sendInfoIDToInternalCallbackBlock[uuid] = callbackBlock;
+            
+            NSMutableDictionary *md = [info mutableCopy];
+            md[kSendInfoResponseIDKey] = uuid;
+            info = [md copy];
+        }
+
+    }
+    else {
+        NSAssert(callbackBlock == nil, @"sendInfo callbacks are only supported if you specify a peer ID");
+    }
+    
+    
+    
+    [self sendInfo:info toPeer:peerID];
+}
+
+//Device A can call Device B and get a callback. Device B responds via the respondToInfo:toPeer:infoID: method
+-(void)respondToInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID infoResponseID:(NSString *)infoResponseID
+{
+    NSMutableDictionary *md = [info mutableCopy];
+    md[kSendInfoResponseIDKey] = infoResponseID;
+    
+    [self sendInfo:[md copy] toPeer:peerID];
+}
+
 -(void)sendInfo:(NSDictionary *)info toPeer:(MCPeerID *)peerID
 {
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:info];
-    
     NSArray *peers;
     
     if (peerID) {
-         NSAssert([self hasConnectedSessionForPeer:peerID], @"Attempted to send data to a peer without a connected session");
         peers = @[peerID];
     }
     else {
         peers = [[self.connectedPeerRemotes allObjects] arrayByAddingObjectsFromArray:[self.connectedPeerRemoteRecipients allObjects]];
     }
+
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:info];
     
     __block NSError *error = nil;
     __block MCPeerID *tmpPeerID;
@@ -125,9 +193,9 @@
             NSLog(@"Error sending data to peer %@: %@",tmpPeerID.displayName,error);
         }
     }];
-    
-    
 }
+
+
 
 #pragma mark Private API
 
@@ -263,6 +331,15 @@
     return session;
 }
 
+-(void) setServiceType:(NSString *)serviceType
+{
+    if (serviceType.length > 15) {
+        serviceType = [serviceType substringWithRange:NSMakeRange(0, 15)];
+    }
+    
+    _serviceType = serviceType;
+}
+
 -(NSString *)serviceType
 {
     if (_serviceType == nil) {
@@ -351,6 +428,13 @@
     return _invitationIDToInviteResponseBlock;
 }
 
+-(NSMutableDictionary *)sendInfoIDToInternalCallbackBlock
+{
+    if (_sendInfoIDToInternalCallbackBlock == nil) {
+        _sendInfoIDToInternalCallbackBlock = [NSMutableDictionary new];
+    }
+    return _sendInfoIDToInternalCallbackBlock;
+}
 
 #pragma mark MCNearbyServiceBrowserDelegate
 
@@ -496,6 +580,9 @@
 -(void) handleSessionConnectionFailed:(MCPeerID *)peerID {
     
     dispatch_async(dispatch_get_main_queue(), ^{
+        
+        NSLog(@"handleSessionConnectionFailed: %@",peerID.displayName);
+        
         void (^connectionBlock)(BOOL accept) = self.peerIDHashToConnectionBlock[@(peerID.hash)];
         
         [self.peerIDHashToSession removeObjectForKey:@(peerID.hash)];
@@ -508,6 +595,7 @@
             connectionBlock(NO);
             [self.peerIDHashToConnectionBlock removeObjectForKey:@(peerID.hash)];
         }
+
         
         [self notififyActivePeersChanged];
     });
@@ -526,7 +614,36 @@
         
         [self shareEventMessage:[NSString stringWithFormat:@"Received info from %@\n%@",peerID.displayName,info[@"m"]]];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice object:self userInfo:@{@"info":info,@"peerID":peerID}];
+        NSMutableDictionary *d = [NSMutableDictionary new];
+        
+        d[@"info"] = info;
+        d[@"peerID"] = peerID;
+
+        if (info[kSendInfoResponseIDKey]) {
+            
+            NSString *uuid = info[kSendInfoResponseIDKey];
+            
+            if (self.sendInfoIDToInternalCallbackBlock[uuid]) {
+                NSLog(@"We just received a response we were waiting for");
+                
+                void (^responseHandler)(BOOL succeeded, NSDictionary *responseInfo) = self.sendInfoIDToInternalCallbackBlock[uuid];
+                
+                [self.sendInfoIDToInternalCallbackBlock removeObjectForKey:uuid];
+                
+                responseHandler(YES,info);
+                
+                return;//We exit here now that we've executed the callback block
+                
+            }
+            else {
+                //we just received info from a device awaiting a response
+                d[@"responseID"] = uuid;
+            }
+            
+        }
+        
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice object:self userInfo:d];
     });
     
     
