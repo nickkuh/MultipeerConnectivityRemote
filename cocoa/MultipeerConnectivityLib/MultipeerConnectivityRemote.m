@@ -610,6 +610,9 @@
             connectionBlock(YES);
             [self.peerIDHashToConnectionBlock removeObjectForKey:@(peerID.hash)];
         }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityPeerSessionConnected object:self userInfo:@{@"peerID":peerID}];
+        
     });
     
     
@@ -623,8 +626,10 @@
         
         NSLog(@"handleSessionConnectionFailed: %@",peerID.displayName);
         
-        void (^connectionBlock)(BOOL accept) = self.peerIDHashToConnectionBlock[@(peerID.hash)];
+        BOOL wasConnectedToSessionWithPeer = [self hasConnectedSessionForPeer:peerID];
         
+        void (^connectionBlock)(BOOL accept) = self.peerIDHashToConnectionBlock[@(peerID.hash)];
+       
         [self.peerIDHashToSession removeObjectForKey:@(peerID.hash)];
         [self.invitingPeersSet removeObject:peerID];
         [self.connectedPeerRemotes removeObject:peerID];
@@ -638,6 +643,9 @@
 
         
         [self notififyActivePeersChanged];
+        
+        
+        if (wasConnectedToSessionWithPeer) [[NSNotificationCenter defaultCenter] postNotificationName:NotificationMultipeerConnectivityPeerSessionDisconnected object:self userInfo:@{@"peerID":peerID}];
     });
 
     

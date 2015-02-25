@@ -13,6 +13,8 @@
 #define NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice                 @"NotificationMultipeerConnectivityReceivedInvitationFromARemoteDevice"
 #define NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice                       @"NotificationMultipeerConnectivityReceivedInfoFromAConnectedRemoteDevice"
 
+#define NotificationMultipeerConnectivityPeerSessionConnected                               @"NotificationMultipeerConnectivityPeerSessionConnected"
+#define NotificationMultipeerConnectivityPeerSessionDisconnected                            @"NotificationMultipeerConnectivityPeerSessionDisconnected"
 
 #define NotificationMultipeerConnectivityEvent                                              @"NotificationMultipeerConnectivityEvent"
 
