@@ -216,6 +216,11 @@
     else {
         peers = [[self.connectedPeerRemotes allObjects] arrayByAddingObjectsFromArray:[self.connectedPeerRemoteRecipients allObjects]];
     }
+    
+    if (peers.count == 0) {
+        
+        return;
+    }
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:info];
     
